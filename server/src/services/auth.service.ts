@@ -4,6 +4,8 @@ import VerificationCodeType from "../core/constants/verificationCodeType";
 import UserModel from "../models/user.model";
 import VerificationCodeModel from "../models/verificationCode.model";
 import { oneYearFromNow } from "../utils/date";
+import appAssert from "../utils/appAssert";
+import { CONFLICT } from "../core/constants/http";
 type createAccountParams = {
   username: string;
   email: string;
@@ -13,10 +15,8 @@ type createAccountParams = {
 
 export const createAccount = async (data: createAccountParams) => {
   const userExist = await UserModel.exists({ email: data.email });
-  if (userExist) {
-    throw new Error("User already exists");
-  }
-
+  
+  appAssert(!userExist, CONFLICT, "Email already in use")
   const user = await UserModel.create({
     username: data.username,
     email: data.email,
