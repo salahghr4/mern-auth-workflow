@@ -39,5 +39,5 @@ export const createAccount = async (data: createAccountParams) => {
     expiresIn: env.ACCESS_TOKEN.expireIn,
   });
 
-  return { user, accessToken, refreshToken };
+  return { user: user.omitPassword(), accessToken, refreshToken };
 };

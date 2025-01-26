@@ -1,3 +1,4 @@
+import env from "../core/constants/env";
 import { CREATED } from "../core/constants/http";
 import asynchandler from "../middleware/asyncHandler";
 import { createAccount } from "../services/auth.service";
@@ -11,5 +12,12 @@ export const registerHandler = asynchandler(async (req, res) => {
 
   const { user, accessToken, refreshToken } = await createAccount(request);
 
-  res.status(CREATED).json({ user, accessToken, refreshToken });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: env.NODE_ENV !== "development",
+    sameSite: "strict",
+    path: `${env.API_PREFIX}/auth/refresh-token`,
+    maxAge: env.REFRESH_TOKEN.expireIn * 1000
+  });
+  res.status(CREATED).json({ user, accessToken });
 });
