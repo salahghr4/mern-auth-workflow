@@ -1,11 +1,11 @@
 import env from "../core/constants/env";
-import { CREATED } from "../core/constants/http";
+import { CREATED, OK } from "../core/constants/http";
 import asynchandler from "../middleware/asyncHandler";
-import { createAccount } from "../services/auth.service";
-import { registerschema } from "../validation/auth.validator";
+import { createAccount, loginUser } from "../services/auth.service";
+import { registerSchema } from "../validation/auth.validator";
 
 export const registerHandler = asynchandler(async (req, res) => {
-  const request = registerschema.parse({
+  const request = registerSchema.parse({
     ...req.body,
     userAgent: req.headers["user-agent"],
   });
@@ -17,7 +17,26 @@ export const registerHandler = asynchandler(async (req, res) => {
     secure: env.NODE_ENV !== "development",
     sameSite: "strict",
     path: `${env.API_PREFIX}/auth/refresh-token`,
-    maxAge: env.REFRESH_TOKEN.expireIn * 1000
+    maxAge: env.REFRESH_TOKEN.expireIn * 1000,
   });
-  res.status(CREATED).json({ user, accessToken });
+  res
+    .status(CREATED)
+    .json({ user, accessToken, message: "Registration successful" });
+});
+
+export const loginHandler = asynchandler(async (req, res) => {
+  const { user, accessToken, refreshToken } = await loginUser({
+    ...req.body,
+    userAgent: req.headers["user-agent"],
+  });
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: env.NODE_ENV !== "development",
+    sameSite: "strict",
+    path: `${env.API_PREFIX}/auth/refresh-token`,
+    maxAge: env.REFRESH_TOKEN.expireIn * 1000,
+  });
+
+  res.status(OK).json({ user, accessToken, message: "Login successful" });
 });

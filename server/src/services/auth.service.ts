@@ -5,7 +5,8 @@ import UserModel from "../models/user.model";
 import VerificationCodeModel from "../models/verificationCode.model";
 import { oneYearFromNow } from "../utils/date";
 import appAssert from "../utils/appAssert";
-import { CONFLICT } from "../core/constants/http";
+import { CONFLICT, UNAUTHORIZED } from "../core/constants/http";
+
 type createAccountParams = {
   username: string;
   email: string;
@@ -13,10 +14,12 @@ type createAccountParams = {
   userAgent?: string;
 };
 
+type loginParams = Omit<createAccountParams, "username">;
+
 export const createAccount = async (data: createAccountParams) => {
   const userExist = await UserModel.exists({ email: data.email });
-  
-  appAssert(!userExist, CONFLICT, "Email already in use")
+
+  appAssert(!userExist, CONFLICT, "Email already in use");
   const user = await UserModel.create({
     username: data.username,
     email: data.email,
@@ -28,6 +31,26 @@ export const createAccount = async (data: createAccountParams) => {
     type: VerificationCodeType.EmailVerification,
     expiresAt: oneYearFromNow(),
   });
+
+  const refreshToken = jwt.sign(
+    { userId: user._id },
+    env.REFRESH_TOKEN.secret,
+    { expiresIn: env.REFRESH_TOKEN.expireIn }
+  );
+
+  const accessToken = jwt.sign({ userId: user._id }, env.ACCESS_TOKEN.secret, {
+    expiresIn: env.ACCESS_TOKEN.expireIn,
+  });
+
+  return { user: user.omitPassword(), accessToken, refreshToken };
+};
+
+export const loginUser = async ({ email, password }: loginParams) => {
+  const user = await UserModel.findOne({ email });
+  appAssert(user, UNAUTHORIZED, "Invalid email or password");
+
+  const isvalid = await user.comparePassword(password);
+  appAssert(isvalid, UNAUTHORIZED, "Invalid email or password");
 
   const refreshToken = jwt.sign(
     { userId: user._id },
