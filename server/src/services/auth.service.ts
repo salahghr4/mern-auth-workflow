@@ -6,6 +6,7 @@ import VerificationCodeModel from "../models/verificationCode.model";
 import { oneYearFromNow } from "../utils/date";
 import appAssert from "../utils/appAssert";
 import { CONFLICT, UNAUTHORIZED } from "../core/constants/http";
+import { refreshTokenOptions, signToken } from "../utils/tokens";
 
 type createAccountParams = {
   username: string;
@@ -32,15 +33,8 @@ export const createAccount = async (data: createAccountParams) => {
     expiresAt: oneYearFromNow(),
   });
 
-  const refreshToken = jwt.sign(
-    { userId: user._id },
-    env.REFRESH_TOKEN.secret,
-    { expiresIn: env.REFRESH_TOKEN.expireIn }
-  );
-
-  const accessToken = jwt.sign({ userId: user._id }, env.ACCESS_TOKEN.secret, {
-    expiresIn: env.ACCESS_TOKEN.expireIn,
-  });
+  const refreshToken = signToken({ userId: user._id }, refreshTokenOptions);
+  const accessToken = signToken({ userId: user._id });
 
   return { user: user.omitPassword(), accessToken, refreshToken };
 };
@@ -52,15 +46,8 @@ export const loginUser = async ({ email, password }: loginParams) => {
   const isvalid = await user.comparePassword(password);
   appAssert(isvalid, UNAUTHORIZED, "Invalid email or password");
 
-  const refreshToken = jwt.sign(
-    { userId: user._id },
-    env.REFRESH_TOKEN.secret,
-    { expiresIn: env.REFRESH_TOKEN.expireIn }
-  );
-
-  const accessToken = jwt.sign({ userId: user._id }, env.ACCESS_TOKEN.secret, {
-    expiresIn: env.ACCESS_TOKEN.expireIn,
-  });
+  const refreshToken = signToken({ userId: user._id }, refreshTokenOptions);
+  const accessToken = signToken({ userId: user._id });
 
   return { user: user.omitPassword(), accessToken, refreshToken };
 };
