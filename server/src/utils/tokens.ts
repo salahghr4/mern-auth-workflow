@@ -1,10 +1,15 @@
+import jwt, { SignOptions } from "jsonwebtoken";
 import env from "../core/constants/env";
 import { UserDocument } from "../models/user.model";
-import jwt, { SignOptions } from "jsonwebtoken";
 
 type Payload = {
   userId: UserDocument["_id"];
 };
+
+type decodedToken = Payload & {
+  iat: number
+  exp: number
+}
 
 type SignOptionsWithSecret = SignOptions & {
   secret: string;
@@ -25,5 +30,14 @@ export const signToken = (
   options?: SignOptionsWithSecret
 ) => {
   const { secret, ...signOpts } = options || accessTokenOptions;
-  return jwt.sign({...payload}, secret, { ...signOpts });
+  return jwt.sign({ ...payload }, secret, { ...signOpts });
+};
+
+export const verifyToken = (token: string, secret: string) => {
+  try {
+    const payload = jwt.verify(token, secret) as decodedToken;
+    return { payload };
+  } catch (error: any) {
+    return { error: error.message };
+  }
 };

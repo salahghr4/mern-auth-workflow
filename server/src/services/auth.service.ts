@@ -6,7 +6,7 @@ import VerificationCodeModel from "../models/verificationCode.model";
 import { oneYearFromNow } from "../utils/date";
 import appAssert from "../utils/appAssert";
 import { CONFLICT, UNAUTHORIZED } from "../core/constants/http";
-import { refreshTokenOptions, signToken } from "../utils/tokens";
+import { refreshTokenOptions, signToken, verifyToken } from "../utils/tokens";
 
 type createAccountParams = {
   username: string;
@@ -50,4 +50,12 @@ export const loginUser = async ({ email, password }: loginParams) => {
   const accessToken = signToken({ userId: user._id });
 
   return { user: user.omitPassword(), accessToken, refreshToken };
+};
+
+export const refreshUserAccessToken = async (refreshToken: string) => {
+  const { payload } = verifyToken(refreshToken, env.REFRESH_TOKEN.secret);
+  appAssert(payload, UNAUTHORIZED, "Invalid refresh token");
+
+  const accessToken = signToken({ userId: payload.userId });
+  return { accessToken };
 };
