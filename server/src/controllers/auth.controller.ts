@@ -4,10 +4,14 @@ import {
   createAccount,
   loginUser,
   refreshUserAccessToken,
+  verifyEmail,
 } from "../services/auth.service";
 import appAssert from "../utils/appAssert";
 import { clearAuthCookie, setAuthCookie } from "../utils/cookies";
-import { registerSchema } from "../validation/auth.validator";
+import {
+  registerSchema,
+  verificationCodeSchema,
+} from "../validation/auth.validator";
 
 export const registerHandler = asynchandler(async (req, res) => {
   const request = registerSchema.parse({
@@ -43,4 +47,13 @@ export const refreshTokenHandler = asynchandler(async (req, res) => {
 
   const { accessToken } = await refreshUserAccessToken(refreshToken);
   res.status(OK).json({ accessToken, message: "Access token refreshed" });
+});
+
+export const emailVerifyHandler = asynchandler(async (req, res) => {
+  const { verificationCode } = verificationCodeSchema.parse({
+    verificationCode: req.params.code,
+  });
+
+  await verifyEmail(verificationCode);
+  res.status(OK).json({ message: "Email was successfully verified" });
 });

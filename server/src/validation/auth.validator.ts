@@ -18,3 +18,10 @@ export const registerSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+export const verificationCodeSchema = z.object({
+  verificationCode: z
+    .string()
+    .min(24, { message: "Invalide verification code" })
+    .max(24, { message: "Invalide verification code" }),
+});

@@ -5,7 +5,12 @@ import UserModel from "../models/user.model";
 import VerificationCodeModel from "../models/verificationCode.model";
 import { oneYearFromNow } from "../utils/date";
 import appAssert from "../utils/appAssert";
-import { CONFLICT, UNAUTHORIZED } from "../core/constants/http";
+import {
+  CONFLICT,
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+  UNAUTHORIZED,
+} from "../core/constants/http";
 import { refreshTokenOptions, signToken, verifyToken } from "../utils/tokens";
 
 type createAccountParams = {
@@ -58,4 +63,22 @@ export const refreshUserAccessToken = async (refreshToken: string) => {
 
   const accessToken = signToken({ userId: payload.userId });
   return { accessToken };
+};
+
+export const verifyEmail = async (code: string) => {
+  const validCode = await VerificationCodeModel.findOne({
+    _id: code,
+    type: VerificationCodeType.EmailVerification,
+    expiresAt: { $gt: new Date() },
+  });
+  appAssert(validCode, NOT_FOUND, "Invalid or expired verification code");
+
+  const updatedUser = await UserModel.findByIdAndUpdate(
+    validCode.userId,
+    { verified: true },
+    { new: true }
+  );
+  appAssert(updatedUser, INTERNAL_SERVER_ERROR, "Failed to verify email");
+
+  await validCode.deleteOne();
 };
