@@ -15,3 +15,8 @@ export const setAuthCookie = ({ res, refreshToken }: Params) => {
     maxAge: env.REFRESH_TOKEN.expireIn * 1000,
   });
 };
+
+export const clearAuthCookie = (res: Response) =>
+  res.clearCookie("refreshToken", {
+    path: `${env.API_PREFIX}/auth/refresh-token`,
+  });

@@ -1,8 +1,7 @@
-import env from "../core/constants/env";
 import { CREATED, OK } from "../core/constants/http";
 import asynchandler from "../middleware/asyncHandler";
 import { createAccount, loginUser } from "../services/auth.service";
-import { setAuthCookie } from "../utils/cookies";
+import { clearAuthCookie, setAuthCookie } from "../utils/cookies";
 import { registerSchema } from "../validation/auth.validator";
 
 export const registerHandler = asynchandler(async (req, res) => {
@@ -26,5 +25,9 @@ export const loginHandler = asynchandler(async (req, res) => {
 
   setAuthCookie({ res, refreshToken })
     .status(OK)
-    .json({ user, accessToken, message: "Login successful" });
+    .json({ user, accessToken, message: "Logged in successfully" });
+});
+
+export const logoutHandler = asynchandler(async (req, res) => {
+  clearAuthCookie(res).status(OK).json({ message: "Logged out successfully" });
 });
