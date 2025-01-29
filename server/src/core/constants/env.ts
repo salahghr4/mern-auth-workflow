@@ -15,6 +15,8 @@ const env = {
     secret: get("REFRESH_TOKEN_SECRET").required().asString(),
     expireIn: get("REFRESH_TOKEN_EXPIRY").required().asIntPositive(),
   },
+  MAILER_USER: get("MAILER_USER").required().asEmailString(),
+  MAILER_PASS: get("MAILER_PASS").required().asString(),
 };
 
 export default env;

@@ -2,6 +2,7 @@ import { Document, model, ObjectId, Schema } from "mongoose";
 import VerificationCodeType from "../core/constants/verificationCodeType";
 
 interface verificationCodeDocument extends Document {
+  _id: ObjectId;
   userId: ObjectId;
   type: VerificationCodeType;
   expiresAt: Date;

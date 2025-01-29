@@ -12,6 +12,7 @@ import {
   UNAUTHORIZED,
 } from "../core/constants/http";
 import { refreshTokenOptions, signToken, verifyToken } from "../utils/tokens";
+import { sendVerificationEmail } from "../utils/mailer";
 
 type createAccountParams = {
   username: string;
@@ -37,6 +38,8 @@ export const createAccount = async (data: createAccountParams) => {
     type: VerificationCodeType.EmailVerification,
     expiresAt: oneYearFromNow(),
   });
+
+  await sendVerificationEmail(user.email, verificationCode._id);
 
   const refreshToken = signToken({ userId: user._id }, refreshTokenOptions);
   const accessToken = signToken({ userId: user._id });
