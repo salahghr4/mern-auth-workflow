@@ -3,16 +3,17 @@ import env from "../core/constants/env";
 import VerificationCodeType from "../core/constants/verificationCodeType";
 import UserModel from "../models/user.model";
 import VerificationCodeModel from "../models/verificationCode.model";
-import { oneYearFromNow } from "../utils/date";
+import { fiveMinutAgo, oneHourFromNow, oneYearFromNow } from "../utils/date";
 import appAssert from "../utils/appAssert";
 import {
   CONFLICT,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
+  TOO_MANY_REQUESTS,
   UNAUTHORIZED,
 } from "../core/constants/http";
 import { refreshTokenOptions, signToken, verifyToken } from "../utils/tokens";
-import { sendVerificationEmail } from "../utils/mailer";
+import { sendPasswordResetEmail, sendVerificationEmail } from "../utils/mailer";
 
 type createAccountParams = {
   username: string;
@@ -84,4 +85,35 @@ export const verifyEmail = async (code: string) => {
   appAssert(updatedUser, INTERNAL_SERVER_ERROR, "Failed to verify email");
 
   await validCode.deleteOne();
+};
+
+export const sendResetPasswordEmail = async (email: string) => {
+  const user = await UserModel.findOne({ email: email });
+  appAssert(user, NOT_FOUND, "User not found");
+
+  // check for password reset requests (max 2 request in 5 min)
+  const requestsCount = await VerificationCodeModel.countDocuments({
+    userId: user._id,
+    type: VerificationCodeType.PasswordVerification,
+    createdAt: { $gt: fiveMinutAgo() },
+  });
+  appAssert(
+    requestsCount <= 1,
+    TOO_MANY_REQUESTS,
+    "Too many requests, please try again later"
+  );
+
+  const exipresAt = oneHourFromNow();
+  const verificationCode = await VerificationCodeModel.create({
+    userId: user._id,
+    type: VerificationCodeType.PasswordVerification,
+    expiresAt: exipresAt,
+  });
+
+  await sendPasswordResetEmail(
+    email,
+    verificationCode._id,
+    exipresAt.getDate()
+  );
+  return;
 };

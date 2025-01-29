@@ -1,6 +1,9 @@
 import nodeMailer from "nodemailer";
 import env from "../core/constants/env";
-import { getVerifyEmailTemplate } from "./emailTemplates";
+import {
+  getPasswordResetTemplate,
+  getVerifyEmailTemplate,
+} from "./emailTemplates";
 import { ObjectId } from "mongoose";
 
 type emailParams = {
@@ -33,5 +36,17 @@ export const sendVerificationEmail = async (email: string, code: ObjectId) => {
   sendMail({
     to: email,
     ...getVerifyEmailTemplate(url),
+  });
+};
+
+export const sendPasswordResetEmail = async (
+  email: string,
+  code: ObjectId,
+  exipresAt: number
+) => {
+  const url = `${env.APP_ORIGIN}/password/reset?code=${code}&expiresAt=${exipresAt}`;
+  sendMail({
+    to: email,
+    ...getPasswordResetTemplate(url),
   });
 };

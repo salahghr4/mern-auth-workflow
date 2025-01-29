@@ -4,11 +4,13 @@ import {
   createAccount,
   loginUser,
   refreshUserAccessToken,
+  sendResetPasswordEmail,
   verifyEmail,
 } from "../services/auth.service";
 import appAssert from "../utils/appAssert";
 import { clearAuthCookie, setAuthCookie } from "../utils/cookies";
 import {
+  emailSchema,
   registerSchema,
   verificationCodeSchema,
 } from "../validation/auth.validator";
@@ -56,4 +58,12 @@ export const emailVerifyHandler = asynchandler(async (req, res) => {
 
   await verifyEmail(verificationCode);
   res.status(OK).json({ message: "Email was successfully verified" });
+});
+
+export const forgotPasswordHandler = asynchandler(async (req, res) => {
+  const email = emailSchema.parse(req.body.email);
+
+  await sendResetPasswordEmail(email);
+
+  res.status(OK).json({ message: "Password reset email sent successfully" });
 });

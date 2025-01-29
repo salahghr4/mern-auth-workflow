@@ -6,7 +6,7 @@ const env = {
   API_PREFIX: get("API_PREFIX").default("/api/v1").asString(),
   NODE_ENV: get("NODE_ENV").default("development").asString(),
   MONGO_URI: get("MONGO_URI").required().asUrlString(),
-  APP_ORIGIN: get("APP_ORIGIN").required().asUrlString(),
+  APP_ORIGIN: get("APP_ORIGIN").required().asString(),
   ACCESS_TOKEN: {
     secret: get("ACCESS_TOKEN_SECRET").required().asString(),
     expireIn: get("ACCESS_TOKEN_EXPIRY").required().asIntPositive(),
