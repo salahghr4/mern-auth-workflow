@@ -92,34 +92,41 @@ export const verifyEmail = async (code: string) => {
 };
 
 export const sendResetPasswordEmail = async (email: string) => {
-  const user = await UserModel.findOne({ email: email });
-  appAssert(user, NOT_FOUND, "User not found");
+  // Catch any errors that were thrown and log them (but always return a success)
+  // This will prevent leaking sensitive data back to the client (e.g. user not found).
+  try {
+    const user = await UserModel.findOne({ email: email });
+    appAssert(user, NOT_FOUND, "User not found");
 
-  // check for password reset requests (max 2 request in 5 min)
-  const requestsCount = await VerificationCodeModel.countDocuments({
-    userId: user._id,
-    type: VerificationCodeType.PasswordVerification,
-    createdAt: { $gt: fiveMinutAgo() },
-  });
-  appAssert(
-    requestsCount <= 1,
-    TOO_MANY_REQUESTS,
-    "Too many requests, please try again later"
-  );
+    // check for password reset requests (max 2 request in 5 min)
+    const requestsCount = await VerificationCodeModel.countDocuments({
+      userId: user._id,
+      type: VerificationCodeType.PasswordVerification,
+      createdAt: { $gt: fiveMinutAgo() },
+    });
+    appAssert(
+      requestsCount <= 1,
+      TOO_MANY_REQUESTS,
+      "Too many requests, please try again later"
+    );
 
-  const exipresAt = oneHourFromNow();
-  const verificationCode = await VerificationCodeModel.create({
-    userId: user._id,
-    type: VerificationCodeType.PasswordVerification,
-    expiresAt: exipresAt,
-  });
+    const exipresAt = oneHourFromNow();
+    const verificationCode = await VerificationCodeModel.create({
+      userId: user._id,
+      type: VerificationCodeType.PasswordVerification,
+      expiresAt: exipresAt,
+    });
 
-  await sendPasswordResetEmail(
-    email,
-    verificationCode._id,
-    exipresAt.getTime()
-  );
-  return;
+    await sendPasswordResetEmail(
+      email,
+      verificationCode._id,
+      exipresAt.getTime()
+    );
+    return;
+  } catch (error) {
+    console.log("Send password reset error: ", error);
+    return;
+  }
 };
 
 export const resetPassword = async ({
