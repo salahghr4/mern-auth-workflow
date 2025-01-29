@@ -4,6 +4,15 @@ export const emailSchema = z
   .string()
   .email({ message: "Invalid email address" });
 
+export const passwordSchema = z
+  .string()
+  .min(8, { message: "Password must be 8 or more characters long" })
+  .max(255);
+
+export const verificationCode = z
+  .string()
+  .min(24, { message: "Invalide verification code" })
+  .max(24, { message: "Invalide verification code" });
 
 export const registerSchema = z
   .object({
@@ -12,10 +21,7 @@ export const registerSchema = z
       .min(3, { message: "Username must be 3 or more characters long" })
       .max(30),
     email: emailSchema,
-    password: z
-      .string()
-      .min(8, { message: "Password must be 8 or more characters long" })
-      .max(255),
+    password: passwordSchema,
     confirmPassword: z.string(),
     userAgent: z.string().optional(),
   })
@@ -25,9 +31,10 @@ export const registerSchema = z
   });
 
 export const verificationCodeSchema = z.object({
-  verificationCode: z
-    .string()
-    .min(24, { message: "Invalide verification code" })
-    .max(24, { message: "Invalide verification code" }),
+  verificationCode: verificationCode,
 });
 
+export const resetPassswordSchema = z.object({
+  password: passwordSchema,
+  verificationCode: verificationCode,
+});
