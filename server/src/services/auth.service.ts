@@ -122,7 +122,10 @@ export const sendResetPasswordEmail = async (email: string) => {
   return;
 };
 
-export const resetPassword = async ({ password, verificationCode }: ResetPasswordParams) => {
+export const resetPassword = async ({
+  password,
+  verificationCode,
+}: ResetPasswordParams) => {
   const valideCode = await VerificationCodeModel.findOne({
     _id: verificationCode,
     type: VerificationCodeType.PasswordVerification,
@@ -139,7 +142,10 @@ export const resetPassword = async ({ password, verificationCode }: ResetPasswor
     "Failed to reset password, please try again later"
   );
 
-  await valideCode.deleteOne();
+  await VerificationCodeModel.deleteMany({
+    userId: updatedUser._id,
+    type: VerificationCodeType.PasswordVerification,
+  });
 
   return { user: updatedUser.omitPassword() };
 };
