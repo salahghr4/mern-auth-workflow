@@ -12,7 +12,8 @@ export type LoginResponse = {
 
 export type ErrorType = {
   status: number;
-  message: string;
+  message?: string;
+  errors?: { path: string; message: string }[];
 };
 
 export type AuthContextType = {
@@ -20,5 +21,11 @@ export type AuthContextType = {
   isLoading: boolean;
   token: string | null;
   error: ErrorType | null;
-  login: (email: string, password: string) => void;
+  login: (email: string, password: string) => Promise<void>;
+  register: (data: {
+    email: string;
+    username: string;
+    password: string;
+    confirmPassword: string;
+  }) => Promise<void>;
 };

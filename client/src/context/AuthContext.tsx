@@ -38,9 +38,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const register = async (data: {
+    email: string;
+    username: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const res = await axios<LoginResponse>({
+        method: "POST",
+        url: "/auth/register",
+        data,
+      });
+      setToken(res.accessToken);
+      setUser(res.user);
+      navigate("/");
+    } catch (error: any) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user: user, isLoading, login, token, error }}
+      value={{ user: user, isLoading, login, token, error, register }}
     >
       {children}
     </AuthContext.Provider>

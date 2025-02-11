@@ -20,6 +20,7 @@ const RegisterPage = () => {
       <form
         className="max-w-md flex items-center justify-center flex-col w-full py-6 px-8 shadow-sm rounded-xl bg-white"
         onSubmit={handleSubmit}
+        noValidate
       >
         <h1 className="text-2xl font-bold text-gray-900">
           Sign in to your account
@@ -41,7 +42,6 @@ const RegisterPage = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && login(email, password)}
           />
           <Link
             to={"/password/forgot"}
@@ -50,7 +50,7 @@ const RegisterPage = () => {
             Forgot password ?
           </Link>
           <Button
-            disabled={!email || password.length < 8 || isLoading}
+            disabled={!email || isLoading}
             isLoading={isLoading}
           >
             Sign in

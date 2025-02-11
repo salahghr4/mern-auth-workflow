@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
-import Input from "../components/Input";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Button from "../components/Button";
+import Input from "../components/Input";
+import useAuth from "../hooks/useAuth";
 
 const RegisterPage = () => {
   const [username, setUsername] = useState("");
@@ -9,9 +10,27 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const { error, isLoading, register } = useAuth();
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(username, email, password);
+    register({ email, username, password, confirmPassword });
+  };
+
+  const renderError = (path: string) => {
+    if (error) {
+      return error.errors?.map(
+        (err) =>
+          err.path === path && (
+            <small
+              className="text-red-500"
+              key={err.path}
+            >
+              - {err.message}
+            </small>
+          )
+      );
+    }
   };
 
   return (
@@ -19,37 +38,59 @@ const RegisterPage = () => {
       <form
         className="max-w-md flex items-center justify-center flex-col w-full py-6 px-8 shadow-sm rounded-xl bg-white"
         onSubmit={handleSubmit}
+        noValidate
       >
         <h1 className="text-2xl font-bold text-gray-900">Create an account</h1>
         <div className="w-full py-3 px-2 mt-8 space-y-6">
-          <Input
-            label="Username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <Input
-            label="Email address"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Input
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Input
-            label="Confirm password"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+          <div>
+            <Input
+              label="Username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            {renderError("username")}
+          </div>
+          <div>
+            <Input
+              label="Email address"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {renderError("email")}
+          </div>
+          <div>
+            <Input
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {!error && (
+              <small className="text-gray-500">
+                - Password must be at least 8 characterslong
+              </small>
+            )}
+            {renderError("password")}
+          </div>
+          <div>
+            <Input
+              label="Confirm password"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            {renderError("confirmPassword")}
+          </div>
           <Button
             disabled={
-              !email || password.length < 8 || password !== confirmPassword
+              !email ||
+              !username ||
+              password.length < 8 ||
+              password !== confirmPassword
             }
+            isLoading={isLoading}
           >
             Sign up
           </Button>
