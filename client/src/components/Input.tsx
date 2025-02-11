@@ -5,6 +5,7 @@ type InputProps = {
   type: HTMLInputTypeAttribute;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 const Input = ({ label, ...props }: InputProps) => {

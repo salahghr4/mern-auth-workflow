@@ -17,7 +17,7 @@ const RegisterPage = () => {
   return (
     <div className="grid place-items-center min-h-screen">
       <form
-        className="max-w-md flex items-center justify-center flex-col w-full py-6 px-8 shadow-sm"
+        className="max-w-md flex items-center justify-center flex-col w-full py-6 px-8 shadow-sm rounded-xl bg-white"
         onSubmit={handleSubmit}
       >
         <h1 className="text-2xl font-bold text-gray-900">Create an account</h1>
