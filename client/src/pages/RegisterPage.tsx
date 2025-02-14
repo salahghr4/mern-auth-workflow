@@ -69,7 +69,7 @@ const RegisterPage = () => {
             />
             {!error && (
               <small className="text-gray-500">
-                - Password must be at least 8 characterslong
+                - Password must be at least 8 characters long
               </small>
             )}
             {renderError("password")}
