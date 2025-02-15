@@ -5,6 +5,7 @@ import ForgotPasswordPage from "./pages/ForgotPassword";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />}/>
           <Route path="/email/verify/:code" element={<VerifyEmailPage />}/>
           <Route path="/password/forgot" element={<ForgotPasswordPage/>}/>
+          <Route path="/password/reset" element={<ResetPasswordPage />}/>
         </Routes>
       </div>
     </AuthProvider>

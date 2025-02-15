@@ -88,6 +88,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(false);
   };
 
+  const resetPassword = async (password: string, verificationCode: string) => {
+    setIsLoading(true);
+    try {
+      await axios<ApiResponse>({
+        method: "PATCH",
+        url: "/auth/password/reset",
+        data: { password, verificationCode },
+      });
+      setToken(null);
+      setUser(null);
+      navigate("/login");
+    } catch (error: any) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -99,6 +117,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         register,
         verifyEmail,
         sendResetPasswordEmail,
+        resetPassword,
       }}
     >
       {children}
