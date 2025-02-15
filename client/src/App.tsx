@@ -4,6 +4,7 @@ import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import { AuthProvider } from "./context/AuthContext";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/login" element={<LoginPage />}/>
           <Route path="/register" element={<RegisterPage />}/>
           <Route path="/email/verify/:code" element={<VerifyEmailPage />}/>
+          <Route path="/password/forgot" element={<ForgotPassword/>}/>
         </Routes>
       </div>
     </AuthProvider>

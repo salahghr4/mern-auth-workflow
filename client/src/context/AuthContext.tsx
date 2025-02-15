@@ -78,6 +78,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const sendResetPasswordEmail = async (email: string) => {
+    setIsLoading(true);
+    await axios<void>({
+      method: "POST",
+      url: "/auth/password/forgot",
+      data: { email },
+    });
+    setIsLoading(false);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -88,6 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         error,
         register,
         verifyEmail,
+        sendResetPasswordEmail,
       }}
     >
       {children}

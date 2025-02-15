@@ -30,4 +30,5 @@ export type AuthContextType = {
     confirmPassword: string;
   }) => Promise<void>;
   verifyEmail: (code: string) => Promise<{ success: boolean }>;
+  sendResetPasswordEmail: (email: string) => Promise<void>;
 };
