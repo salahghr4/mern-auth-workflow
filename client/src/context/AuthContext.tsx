@@ -4,7 +4,7 @@ import axios from "../api/apiClient";
 import {
   AuthContextType,
   ErrorType,
-  LoginResponse,
+  ApiResponse,
   User,
 } from "../types/authTypes";
 
@@ -23,13 +23,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await axios<LoginResponse>({
+      const res = await axios<ApiResponse>({
         method: "POST",
         url: "/auth/login",
         data: { email, password },
       });
-      setToken(res.accessToken);
-      setUser(res.user);
+      setToken(res.accessToken as string);
+      setUser(res.user as User);
       navigate("/");
     } catch (error: any) {
       setError(error);
@@ -47,13 +47,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await axios<LoginResponse>({
+      const res = await axios<ApiResponse>({
         method: "POST",
         url: "/auth/register",
         data,
       });
-      setToken(res.accessToken);
-      setUser(res.user);
+      setToken(res.accessToken as string);
+      setUser(res.user as User);
       navigate("/");
     } catch (error: any) {
       setError(error);
@@ -62,9 +62,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const verifyEmail = async (code: string) => {
+    setIsLoading(true);
+    try {
+      await axios<ApiResponse>({
+        method: "PATCH",
+        url: `/auth/email/verify/${code}`,
+      });
+      setUser((prev) => ({ ...prev, verified: true } as User));
+      return { success: true };
+    } catch (error: any) {
+      return { success: false };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user: user, isLoading, login, token, error, register }}
+      value={{
+        user: user,
+        isLoading,
+        login,
+        token,
+        error,
+        register,
+        verifyEmail,
+      }}
     >
       {children}
     </AuthContext.Provider>

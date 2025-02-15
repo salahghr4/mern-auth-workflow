@@ -5,9 +5,10 @@ export type User = {
   verified: boolean;
 };
 
-export type LoginResponse = {
-  accessToken: string;
-  user: User;
+export type ApiResponse = {
+  accessToken?: string;
+  user?: User;
+  message?: string;
 };
 
 export type ErrorType = {
@@ -28,4 +29,5 @@ export type AuthContextType = {
     password: string;
     confirmPassword: string;
   }) => Promise<void>;
+  verifyEmail: (code: string) => Promise<{ success: boolean }>;
 };

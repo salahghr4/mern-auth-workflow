@@ -11,8 +11,7 @@ export const passwordSchema = z
 
 export const verificationCode = z
   .string()
-  .min(24, { message: "Invalide verification code" })
-  .max(24, { message: "Invalide verification code" });
+  .regex(/^[a-f0-9]{24}$/, { message: "Invalide verification code" });
 
 export const registerSchema = z
   .object({

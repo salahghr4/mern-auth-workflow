@@ -18,7 +18,7 @@ const RegisterPage = () => {
   return (
     <div className="grid place-items-center min-h-screen backdrop-blur-2xl">
       <form
-        className="max-w-md flex items-center justify-center flex-col w-full py-6 px-8 shadow-sm rounded-xl bg-white"
+        className="w-auto sm:w-md flex items-center justify-center flex-col py-6 px-8 shadow-sm rounded-xl bg-white"
         onSubmit={handleSubmit}
         noValidate
       >
@@ -45,7 +45,7 @@ const RegisterPage = () => {
           />
           <Link
             to={"/password/forgot"}
-            className="block -mt-5 underline text-cyan-500 cursor-pointer"
+            className="block -mt-5 underline text-cyan-950 cursor-pointer"
           >
             Forgot password ?
           </Link>
@@ -59,7 +59,7 @@ const RegisterPage = () => {
             <p className="text-gray-900">Don't have an account?</p>
             <Link
               to={"/register"}
-              className="underline text-cyan-500 cursor-pointer"
+              className="underline text-cyan-950 cursor-pointer"
             >
               Sign Up
             </Link>

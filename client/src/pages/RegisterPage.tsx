@@ -98,7 +98,7 @@ const RegisterPage = () => {
             <p className="text-gray-900">Already have an account ?</p>
             <Link
               to={"/login"}
-              className="underline text-cyan-500 cursor-pointer"
+              className="underline text-cyan-950 cursor-pointer"
             >
               Sign in
             </Link>

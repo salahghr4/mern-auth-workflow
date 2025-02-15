@@ -14,7 +14,7 @@ const Input = ({ label, ...props }: InputProps) => {
       <div className="mt-2">
         <input
           {...props}
-          className="w-full text-gray-900 py-1.5 px-3 rounded-md outline-1 -outline-offset-1 outline-gray-300  focus:outline-cyan-500 focus:outline-2"
+          className="w-full text-gray-900 py-1.5 px-3 rounded-md outline-1 -outline-offset-1 outline-gray-300  focus:outline-cyan-700 focus:outline-2"
         />
       </div>
     </div>

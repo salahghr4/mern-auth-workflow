@@ -9,7 +9,7 @@ const Button = ({ children, disabled, isLoading }: buttonProps) => {
     <button
       type="submit"
       disabled={disabled}
-      className="w-full bg-cyan-500 h-[38px] px-2 rounded-md disabled:bg-cyan-200 disabled:cursor-not-allowed flex justify-center items-center text-white font-medium cursor-pointer hover:bg-sky-400 transition-colors duration-300"
+      className="w-full bg-cyan-900 h-[38px] px-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center text-white font-medium cursor-pointer hover:bg-slate-700 transition-colors duration-300"
     >
       {isLoading ? (
         <svg
