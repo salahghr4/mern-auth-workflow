@@ -5,7 +5,7 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import useAuth from "../hooks/useAuth";
 
-const ForgotPassword = () => {
+const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
   const [isSent, setIsSent] = useState(false);
   const { isLoading, sendResetPasswordEmail } = useAuth();
@@ -58,7 +58,7 @@ const ForgotPassword = () => {
             to={"/login"}
             className="underline text-cyan-950 cursor-pointer"
           >
-            Sign Up
+            Sign In
           </Link>
         </div>
       </div>
@@ -66,4 +66,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ForgotPasswordPage;

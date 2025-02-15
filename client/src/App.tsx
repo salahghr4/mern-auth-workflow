@@ -1,10 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
-import RegisterPage from "./pages/RegisterPage";
-import LoginPage from "./pages/LoginPage";
 import { AuthProvider } from "./context/AuthContext";
+import ForgotPasswordPage from "./pages/ForgotPassword";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
-import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
           <Route path="/login" element={<LoginPage />}/>
           <Route path="/register" element={<RegisterPage />}/>
           <Route path="/email/verify/:code" element={<VerifyEmailPage />}/>
-          <Route path="/password/forgot" element={<ForgotPassword/>}/>
+          <Route path="/password/forgot" element={<ForgotPasswordPage/>}/>
         </Routes>
       </div>
     </AuthProvider>
