@@ -140,14 +140,15 @@ export const resetPassword = async ({
   });
   appAssert(valideCode, NOT_FOUND, "Invalid or expired verification code");
 
-  const updatedUser = await UserModel.findByIdAndUpdate(valideCode.userId, {
-    password: password,
-  });
+  const user = await UserModel.findById(valideCode.userId);
   appAssert(
-    updatedUser,
+    user,
     INTERNAL_SERVER_ERROR,
     "Failed to reset password, please try again later"
   );
+
+  user.password = password;
+  const updatedUser = await user.save();
 
   await VerificationCodeModel.deleteMany({
     userId: updatedUser._id,
