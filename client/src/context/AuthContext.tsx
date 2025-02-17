@@ -106,6 +106,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const logOut = async () => {
+    setIsLoading(true);
+    await axios({
+      method: "POST",
+      url: "auth/logout",
+    });
+    setUser(null);
+    setToken(null);
+    setIsLoading(false);
+    navigate("/login");
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -118,6 +130,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         verifyEmail,
         sendResetPasswordEmail,
         resetPassword,
+        logOut,
       }}
     >
       {children}
