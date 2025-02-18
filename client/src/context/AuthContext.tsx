@@ -1,12 +1,13 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../api/apiClient";
+import axios, { axiosInstance, TokenRefreshClient } from "../api/apiClient";
 import {
   AuthContextType,
   ErrorType,
   ApiResponse,
   User,
 } from "../types/authTypes";
+import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 
 export const AuthContext = createContext<AuthContextType>(
   {} as AuthContextType
@@ -18,6 +19,65 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<ErrorType | null>(null);
   const navigate = useNavigate();
+
+  useLayoutEffect(() => {
+    const requestIntercept = axiosInstance.interceptors.request.use(
+      (config) => {
+        if (!config.headers["Authorization"]) {
+          config.headers["Authorization"] = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+
+    const refreshInterceptor = axiosInstance.interceptors.response.use(
+      (response) => response.data,
+      async (error: AxiosError) => {
+        const { config = {} as InternalAxiosRequestConfig, response } = error;
+        const { status, data } = response as AxiosResponse<ApiResponse>;
+
+        if (status === 401 && data.errorCode === "InvalidAccessToken") {
+          setIsLoading(true);
+          try {
+            const res = await TokenRefreshClient.get<any, ApiResponse>(
+              "/auth/refresh-token"
+            );
+            setToken(res.accessToken ?? "");
+            config.headers.Authorization = `Bearer ${res.accessToken}`;
+            return TokenRefreshClient(config);
+          } catch (refreshTokenError) {
+            setToken(null);
+            setUser(null);
+          } finally {
+            setIsLoading(false);
+          }
+        }
+
+        return Promise.reject({ status, ...data });
+      }
+    );
+
+    return () => {
+      axiosInstance.interceptors.request.eject(requestIntercept);
+      axiosInstance.interceptors.response.eject(refreshInterceptor);
+    };
+  }, []);
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const res = await axiosInstance.get<any, ApiResponse>("/user/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setUser(res.user as User);
+      } catch (error: any) {
+        console.log(error);
+      }
+    };
+    getUser();
+  }, []);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);

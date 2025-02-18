@@ -9,6 +9,7 @@ export type ApiResponse = {
   accessToken?: string;
   user?: User;
   message?: string;
+  errorCode?: string;
 };
 
 export type ErrorType = {

@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "./components/Home";
 import { AuthProvider } from "./context/AuthContext";
 import ForgotPasswordPage from "./pages/ForgotPassword";
+import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import PrivateRoutes from "./routes/PrivateRoutes";
 import PublicRoutes from "./routes/PublicRoutes";
 
@@ -15,7 +15,7 @@ function App() {
       <div className="bg-white min-h-screen overflow-hidden bg-gradient-to-br from-cyan-950 ">
         <Routes>
           <Route element={<PrivateRoutes />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<HomePage />} />
           </Route>
           <Route element={<PublicRoutes />}>
             <Route path="/login" element={<LoginPage />}/>

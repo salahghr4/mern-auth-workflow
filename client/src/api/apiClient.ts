@@ -1,21 +1,24 @@
-import axiosClient, { AxiosRequestConfig } from "axios";
+import axiosClient, {
+  AxiosRequestConfig,
+  CreateAxiosDefaults
+} from "axios";
 
-const axiosInstance = axiosClient.create({
+const options: CreateAxiosDefaults = {
   baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
   },
-  withCredentials: true,
-});
+};
 
-axiosInstance.interceptors.response.use(
-  (response) => response.data,
-  (error) => {
-    const { status, data } = error.response;
-    return Promise.reject({ status, ...data });
-  }
-);
+export const axiosInstance = axiosClient.create(options);;
+
+// create a separate client for refreshing the access token
+// to avoid infinite loops with the error interceptor
+export const TokenRefreshClient = axiosClient.create(options);
+TokenRefreshClient.interceptors.response.use((response) => response.data);
+
 
 /**
  * Replaces main `axios` instance with the custom-one.
