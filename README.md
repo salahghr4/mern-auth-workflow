@@ -135,7 +135,7 @@ npm run dev
 
 ### Login user
 
-- `POST /api/v1/auth/login`: Add a new task.
+- `POST /api/v1/auth/login`
 
   <table border=1 style="width: 60%;">
     <tr>
@@ -198,7 +198,7 @@ npm run dev
       <td>string</td>
     </tr>
     <tr>
-      <td>verificationCode (a code to verify the request generated on frogot password request)</td>
+      <td>verificationCode (a code to verify the request generated on forgot password request)</td>
       <td>string</td>
     </tr>
   </table>
