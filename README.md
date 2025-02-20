@@ -24,7 +24,27 @@ This project is a MERN (MongoDB, Express, React, Node.js) authentication workflo
 - **MongoDB**
 - **JWT**
 
-with `Typescript` for type safety
+with `Typescript` for type 
+
+## Screenshots
+
+### Login page
+
+![Sign in page](./client/public/SignInPage.jpg)
+
+### Register Page
+
+![Sign up page](./client/public/SignUpPage.jpg)
+
+###  Forgot password page
+![forgot password page](./client/public/ForgotPasswordPage.jpg)
+![forgot password page](./client/public/ForgotPasswordPage2.jpg)
+
+###  Reset password page
+![reset password page](./client/public/ResetPasswordPage.jpg)
+
+###  Home page
+![Home page](./client/public/HomePage.jpg)
 
 ## Getting Started
 
